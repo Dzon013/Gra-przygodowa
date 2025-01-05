@@ -1,26 +1,28 @@
 from Postacie import Przeciwnik
 from Postacie import Bohater
+from Pasywne_Lokacje import Ekwipunek
+from Pasywne_Lokacje import Wioska
 
 
 class Gra:
     def __init__(self):
         self.bohater = None
-        self.przeciwnik1 = Przeciwnik("Goblin", 30, 5, 50)
-        self.przeciwnik2 = Przeciwnik("Pająk", 50, 15, 100)
-        self.przeciwnik3 = Przeciwnik("Śmierć", 70, 30, 200)
-        self.przeciwnik4 = Przeciwnik("Terroryści", 100, 20, 300)
-        self.boss = Przeciwnik("Smok", 300, 40, 400)
+        self.przeciwnik1 = Przeciwnik("Goblin", 30, 5, 50, 50)
+        self.przeciwnik2 = Przeciwnik("Pająk", 50, 15, 100, 100)
+        self.przeciwnik3 = Przeciwnik("Śmierć", 70, 30, 200, 200)
+        self.przeciwnik4 = Przeciwnik("Terroryści", 100, 20, 300, 300)
+        self.boss = Przeciwnik("Smok", 300, 40, 400, 400)
 
     def start(self):
         print("Witaj w grze przygodowej!")
         imie = input("Jak masz na imię, bohaterze?\n")
         if imie == "admin":
-            self.bohater = Bohater(imie, 1000, 1000, 10000)
-            print(f"\n{imie}:\nzdrowie: {self.bohater.zdrowie}\nobrażenia: {self.bohater.sila}\npunkty: {self.bohater.punkty}")
+            self.bohater = Bohater(imie, 1000, 1000, 0, 10000, 0, 999)
+            print(f"{self.bohater.imie}:\nzdrowie: {self.bohater.zdrowie}\nobrażenia: {self.bohater.sila}\nosłona: {self.bohater.oslona}\npunkty: {self.bohater.punkty}\nBudżet: {self.bohater.pieniadze}\nLevel {self.bohater.level}")
             self.poruszaj_sie()
         else:
-            self.bohater = Bohater(imie, 10, 10, 100)
-            print(f"\n{imie}:\nzdrowie: {self.bohater.zdrowie}\nobrażenia: {self.bohater.sila}\npunkty: {self.bohater.punkty}")
+            self.bohater = Bohater(imie, 10, 10, 0, 100, 0, 0)
+            print(f"{self.bohater.imie}:\nzdrowie: {self.bohater.zdrowie}\nobrażenia: {self.bohater.sila}\nosłona: {self.bohater.oslona}\npunkty: {self.bohater.punkty}\nBudżet: {self.bohater.pieniadze}\nLevel {self.bohater.level}")
             self.poruszaj_sie()
 
     def poruszaj_sie(self):
@@ -47,50 +49,9 @@ class Gra:
             print("Idziesz ulicą i spotykasz konwuj terrorystów!")
             self.walka(self.przeciwnik4)
         elif wybor == "5":
-            regen = input("Odwiedzasz wioskę i regenerujesz zdrowie.\nTAK: Koszt 10 punktów lub NIE aby wyjść: ")
-            if regen == "NIE":
-                self.poruszaj_sie()
-            if regen == "TAK":
-                self.bohater.zdrowie += 10
-                self.bohater.punkty = self.bohater.punkty - 10
-                print(f"{self.bohater.imie}:\nzdrowie: {self.bohater.zdrowie}\nobrażenia: {self.bohater.sila}\npunkty: {self.bohater.punkty}")
-                self.poruszaj_sie()
+            Wioska.regeneracja()
         elif wybor == "6":
-            print("Witamy w zbrojowni, co chciałbyś kupić. Mamy na stanie:\nmiecz: 120 punktów\nłuk: 200 punktów\ntarcza: 400 punktów\n")
-            print(f"{self.bohater.imie}:\nzdrowie: {self.bohater.zdrowie}\nobrażenia: {self.bohater.sila}\npunkty: {self.bohater.punkty}\n")
-            kupno = input(str("Jeśli chcesz opuścić zbrojownie wpisz 0: "))
-            if kupno == "0":
-                self.poruszaj_sie()
-            elif kupno == "miecz":
-                if self.bohater.punkty < 120:
-                    print("Za mało punktów")
-                    self.poruszaj_sie()
-                else:
-                    self.bohater.punkty = self.bohater.punkty - 120
-                    self.bohater.sila = self.bohater.sila + 20
-                    print("Zakupiono miecz. Zadajesz teraz więcej obrażeń")
-                    print(f"\n{self.bohater.imie}:\nzdrowie: {self.bohater.zdrowie}\nobrażenia: {self.bohater.sila}\npunkty: {self.bohater.punkty}\n")
-                    self.poruszaj_sie()
-            elif kupno == "łuk":
-                if self.bohater.punkty < 200:
-                    print("Za mało punktów")
-                    self.poruszaj_sie()
-                else:
-                    self.bohater.punkty = self.bohater.punkty - 200
-                    self.bohater.sila = self.bohater.sila + 40
-                    print("Zakupiono łuk. Zadajesz teraz jeszcze więcej obrażeń")
-                    print(f"\n{self.bohater.imie}:\nzdrowie: {self.bohater.zdrowie}\nobrażenia: {self.bohater.sila}\npunkty: {self.bohater.punkty}\n")
-                    self.poruszaj_sie()
-            elif kupno == "tarcza":
-                if self.bohater.punkty < 400:
-                    print("Za mało punktów")
-                    self.poruszaj_sie()
-                else:
-                    self.bohater.punkty = self.bohater.punkty - 400
-                    self.bohater.sila = self.bohater.sila + 100
-                    print("Zakupiono tarczę. Zatajesz teraz ogromne obrażenia")
-                    print(f"\n{self.bohater.imie}:\nzdrowie: {self.bohater.zdrowie}\nobrażenia: {self.bohater.sila}\npunkty: {self.bohater.punkty}\n")
-                    self.poruszaj_sie()
+            Ekwipunek.zbrojownia()
         elif wybor == "7":
             print("Uwaga! Nadchodzi BOSS!")
             self.walka(self.boss)
@@ -109,16 +70,20 @@ class Gra:
                     przeciwnik.atakuj(self.bohater)
             elif wybor == "2":
                 print("Uciekasz z walki!")
-                self.bohater.punkty = self.bohater.punkty - 10
+                self.bohater.pieniadze = self.bohater.pieniadze - 10
                 przeciwnik.zdrowie = przeciwnik.zdrowie + 50
                 self.poruszaj_sie()
                 break
             else:
                 print("Nieprawidłowy wybór.")
-        if self.bohater.zdrowie <= 0:
-            print("Przegrałeś! Gra zakończona.")
+        if self.bohater.oslona <= 0:
+            if self.bohater.zdrowie <= 0:
+                print("Przegrałeś! Gra zakończona.")
         elif przeciwnik.zdrowie <= 0:
-            print(f"Wygrałeś walkę!\n otrzymujesz {przeciwnik.xp} punktów")
+            print(f"Wygrałeś walkę!\n otrzymujesz {przeciwnik.xp} punktów oraz {przeciwnik.xp}zł")
             self.bohater.punkty = self.bohater.punkty + przeciwnik.xp
-            print(f"\n{self.bohater.imie}:\nzdrowie: {self.bohater.zdrowie}\nobrażenia: {self.bohater.sila}\npunkty: {self.bohater.punkty}\n")
+            self.bohater.pieniadze = self.bohater.pieniadze + przeciwnik.xp
+            print(f"{self.bohater.imie}:\nzdrowie: {self.bohater.zdrowie}\nobrażenia: {self.bohater.sila}\nosłona: {self.bohater.oslona}\npunkty: {self.bohater.punkty}\nBudżet: {self.bohater.pieniadze}\nLevel {self.bohater.level}")
             self.poruszaj_sie()
+
+
